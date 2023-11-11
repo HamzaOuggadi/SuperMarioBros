@@ -26,6 +26,12 @@ public class StartupHelper {
             return false;
         }
 
+        if ("true".equals(System.getProperty(JVM_RESTARTED_ARG))) {
+            System.err.println(
+                    "There was a problem evaluating whether the JVM was started with the -XstartOnFirstThread argument.");
+            return false;
+        }
+
         ArrayList<String> jvmArgs = new ArrayList<>();
         String javaExecPath = ProcessHandle.current().info().command().orElseThrow();
         // Because we're targeting a higher than 9 java version
