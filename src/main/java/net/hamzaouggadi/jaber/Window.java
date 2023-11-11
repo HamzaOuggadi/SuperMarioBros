@@ -1,5 +1,7 @@
 package net.hamzaouggadi.jaber;
 
+import net.hamzaouggadi.jaber.listeners.KeyListener;
+import net.hamzaouggadi.jaber.listeners.MouseListener;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -15,6 +17,7 @@ public class Window {
     private int width;
     private String title;
     private long glfwWindow;
+    private float r, g, b, a;
 
     private static Window window = null;
 
@@ -22,6 +25,10 @@ public class Window {
         this.width = 1920;
         this.height = 1080;
         this.title = "Super Mario Bros";
+        r = 1;
+        g = 1;
+        b = 1;
+        a = 1;
     }
 
     public static Window get() {
@@ -67,6 +74,15 @@ public class Window {
             throw new IllegalStateException("Failed to create window !");
         }
 
+        // Setting input Callbacks
+        // Mouse Listeners
+        glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
+        glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
+        glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
+        // Key Listener
+        glfwSetKeyCallback(glfwWindow, KeyListener::keyCallBack);
+
+
         // Make the OpenGL Context current
         glfwMakeContextCurrent(glfwWindow);
 
@@ -90,8 +106,17 @@ public class Window {
             glfwPollEvents();
 
             // Setting window color to solid red
-            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE)) {
+                b = Math.max(b - 0.01f, 0);
+                g = Math.max(g - 0.01f, 0);
+            }
+
+            if (MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_1)) {
+                System.out.println("Mouse Button Key 1 is pressed, in X position : " + MouseListener.getX());
+            }
 
             glfwSwapBuffers(glfwWindow);
 

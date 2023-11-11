@@ -22,6 +22,7 @@ public class MouseListener {
         this.lastY = 0.0;
     }
 
+    // Uses Singleton design pattern
     public static MouseListener get() {
         if (instance == null) {
             instance = new MouseListener();
