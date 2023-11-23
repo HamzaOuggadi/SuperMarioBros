@@ -2,6 +2,7 @@ package net.hamzaouggadi.jaber;
 
 import net.hamzaouggadi.jaber.listeners.KeyListener;
 import net.hamzaouggadi.jaber.listeners.MouseListener;
+import net.hamzaouggadi.utils.Time;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -18,6 +19,7 @@ public class Window {
     private String title;
     private long glfwWindow;
     private float r, g, b, a;
+    private static Scene currentScene;
 
     private static Window window = null;
 
@@ -36,6 +38,21 @@ public class Window {
             window = new Window();
         }
         return window;
+    }
+
+    public static void changeScene(int newScene) {
+        switch (newScene) {
+            case 0 :
+                currentScene = new LevelEditorScene();
+                // currentScene.init();
+                break;
+            case 1 :
+                currentScene = new LevelScene();
+                // currentScene.init();
+                break;
+            default:
+                assert false : "Unknown Scene '" + newScene + "'";
+        }
     }
 
     public void run() {
@@ -101,6 +118,10 @@ public class Window {
     }
 
     public void loop() {
+
+        float beginTime = Time.getTime();
+        float endTime = Time.getTime();
+
         while (!glfwWindowShouldClose(glfwWindow)) {
             // Will be polling events here
             glfwPollEvents();
@@ -120,6 +141,9 @@ public class Window {
 
             glfwSwapBuffers(glfwWindow);
 
+            endTime = Time.getTime();
+            float dt = endTime - beginTime;
+            beginTime = endTime;
         }
     }
 }
