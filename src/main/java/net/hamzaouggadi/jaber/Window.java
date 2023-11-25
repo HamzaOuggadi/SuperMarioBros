@@ -18,7 +18,7 @@ public class Window {
     private int width;
     private String title;
     private long glfwWindow;
-    private float r, g, b, a;
+    public float r, g, b, a;
     private static Scene currentScene;
 
     private static Window window = null;
@@ -44,11 +44,11 @@ public class Window {
         switch (newScene) {
             case 0 :
                 currentScene = new LevelEditorScene();
-                // currentScene.init();
+                currentScene.init();
                 break;
             case 1 :
                 currentScene = new LevelScene();
-                // currentScene.init();
+                currentScene.init();
                 break;
             default:
                 assert false : "Unknown Scene '" + newScene + "'";
@@ -84,6 +84,8 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
         // Create GLFW Window
         glfwWindow = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -115,12 +117,15 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+
+        Window.changeScene(0);
     }
 
     public void loop() {
 
         float beginTime = Time.getTime();
         float endTime = Time.getTime();
+        float dt = -1.0f;
 
         while (!glfwWindowShouldClose(glfwWindow)) {
             // Will be polling events here
@@ -130,10 +135,7 @@ public class Window {
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE)) {
-                b = Math.max(b - 0.01f, 0);
-                g = Math.max(g - 0.01f, 0);
-            }
+            if (dt >= 0) currentScene.update(dt);
 
             if (MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_1)) {
                 System.out.println("Mouse Button Key 1 is pressed, in X position : " + MouseListener.getX());
@@ -142,7 +144,7 @@ public class Window {
             glfwSwapBuffers(glfwWindow);
 
             endTime = Time.getTime();
-            float dt = endTime - beginTime;
+            dt = endTime - beginTime;
             beginTime = endTime;
         }
     }
